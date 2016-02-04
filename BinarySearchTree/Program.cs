@@ -9,7 +9,9 @@ namespace DataStructuresAndAlgorithmsInCSharp
   {
     static void Main(string[] args)
     {
-      TestAVLTree();
+      //TestBSTree();
+      //TestAVLTree();
+      TestRBTree();
       System.Console.Read();
     }
 
@@ -52,8 +54,20 @@ namespace DataStructuresAndAlgorithmsInCSharp
       avlt.Insert(37);
       avlt.Insert(22);
       avlt.Insert(99);
+    }
 
-      //Console.WriteLine(TreePrinter.Print(avlt));
+    static void TestRBTree()
+    {
+      System.Console.WriteLine("Begin Testing RBTree");
+
+      RBTree rbt = new RBTree();
+      rbt.Insert(3);
+      rbt.Insert(23);
+      rbt.Insert(45);
+      rbt.Insert(16);
+      rbt.Insert(37);
+      rbt.Insert(22);
+      rbt.Insert(99);
     }
   }
 }

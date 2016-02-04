@@ -22,6 +22,11 @@ namespace DataStructuresAndAlgorithmsInCSharp
       public int data;
       public Node left = null;
       public Node right = null;
+      public int Value
+      {
+        get { return data; }
+        set { data = value; }
+      }
       public IBinaryTreeNode LeftChild
       {
         get { return left; }
@@ -30,10 +35,10 @@ namespace DataStructuresAndAlgorithmsInCSharp
       {
         get { return right; }
       }
-      public int Value
+      public int Color
       {
-        get { return data; }
-        set { data = value; }
+        get { return 0; }
+        set { }
       }
       public Node(int i)
       {
@@ -65,7 +70,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
     public void Insert(int i)
     {
       root = Insert(i, root);
-      Print();
+      Console.WriteLine(TreePrinter.Print(this));
     }
 
     private Node Insert(int i, Node n)
@@ -146,11 +151,6 @@ namespace DataStructuresAndAlgorithmsInCSharp
     {
       n.right = RotateWithLeftChild(n.right);
       return RotateWithRightChild(n);
-    }
-
-    public void Print()
-    {
-      Console.WriteLine(TreePrinter.Print(this));
     }
   }
 }
