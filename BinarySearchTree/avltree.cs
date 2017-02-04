@@ -83,9 +83,9 @@ namespace DataStructuresAndAlgorithmsInCSharp
         if (Height(n.left) - Height(n.right) == 2)
         {
           if (i < n.left.data)
-            n = RotateWithLeftChild(n); // LL
+            n = RotateLL(n); // LL
           else
-            n = DoubleRotateWithLeftChild(n); // LR
+            n = RotateLR(n); // LR
         }
       }
       else if (i > n.data)
@@ -94,9 +94,9 @@ namespace DataStructuresAndAlgorithmsInCSharp
         if (Height(n.right) - Height(n.left) == 2)
         {
           if (i > n.right.data)
-            n = RotateWithRightChild(n); // RR
+            n = RotateRR(n); // RR
           else
-            n = DoubleRotateWithRightChild(n); // RL
+            n = RotateRL(n); // RL
         }
       }
       else
@@ -108,7 +108,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
       return n;
     }
 
-    private Node RotateWithLeftChild(Node n)
+    private Node RotateLL(Node n)
     {
       Node leftChild = n.left;
 
@@ -125,7 +125,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
       else
         return n;
     }
-    private Node RotateWithRightChild(Node n)
+    private Node RotateRR(Node n)
     {
       Node rightChild = n.right;
 
@@ -142,15 +142,15 @@ namespace DataStructuresAndAlgorithmsInCSharp
       else
         return n;
     }
-    private Node DoubleRotateWithLeftChild(Node n)
+    private Node RotateLR(Node n)
     {
-      n.left = RotateWithRightChild(n.left);
-      return RotateWithLeftChild(n);
+      n.left = RotateRR(n.left);
+      return RotateLL(n);
     }
-    private Node DoubleRotateWithRightChild(Node n)
+    private Node RotateRL(Node n)
     {
-      n.right = RotateWithLeftChild(n.right);
-      return RotateWithRightChild(n);
+      n.right = RotateLL(n.right);
+      return RotateRR(n);
     }
   }
 }
