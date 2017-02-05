@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DataStructuresAndAlgorithmsInCSharp
+﻿namespace DataStructuresAndAlgorithmsInCSharp
 {
   class RBTree : IBinaryTree
   {
@@ -28,10 +26,14 @@ namespace DataStructuresAndAlgorithmsInCSharp
         get;
         set;
       }
-      public Node(int i)
+      public override string ToString()
+      {
+        return (this.Color == RED ? "R" : "") + Value.ToString();
+      }
+      public Node(int i, int Color)
       {
         this.data = i;
-        this.Color = BLACK; // 0 is black, 1 is red
+        this.Color = Color; // 0 is black, 1 is red
       }
     }
 
@@ -45,31 +47,44 @@ namespace DataStructuresAndAlgorithmsInCSharp
       get { return root; }
     }
 
+    private static bool IsBlack(Node n)
+    {
+      return n == null || n.Color == BLACK;
+    }
+    private static bool IsRed(Node n)
+    {
+      return n != null && n.Color == RED;
+    }
+
     public void Insert(int i)
     {
-      root = Insert(i, root);
+      if (root == null)
+        root = new Node(i, BLACK); // root node must be BLACK
+      else
+        root = Insert(i, root);
+
+      System.Console.WriteLine(TreePrinter.Print(this));
     }
 
     private Node Insert(int i, Node n)
     {
       if (n == null)
-        n = new Node(i);
+        n = new Node(i, RED); // new node is RED
       else if (i < n.data)
       {
         n.left = Insert(i, n.left);
         n.left.father = n;
-        n.left.Color = RED;
-        if (n.Color == RED)
+        if (IsRed(n.left) && (IsRed(n.left.left) || IsRed(n.left.right)))
         {
-          if (n.father.right.Color == RED)
+          if (IsRed(n.right))
           {
-            n.father.Color = RED;
-            n.father.right.Color = BLACK;
-            n.Color = BLACK;
+            n.Color = RED;
+            n.right.Color = BLACK;
+            n.left.Color = BLACK;
           }
           else
           {
-            if (i < n.left.data)
+            if (IsRed(n.left.left))
               n = RotateLL(n); // LL
             else
               n = RotateLR(n); // LR
@@ -80,18 +95,17 @@ namespace DataStructuresAndAlgorithmsInCSharp
       {
         n.right = Insert(i, n.right);
         n.right.father = n;
-        n.right.Color = RED;
-        if (n.Color == RED)
+        if (IsRed(n.right) && (IsRed(n.right.left) || IsRed(n.right.right)))
         {
-          if (n.father.left.Color == RED)
+          if (IsRed(n.left))
           {
-            n.father.Color = RED;
-            n.father.left.Color = BLACK;
-            n.Color = BLACK;
+            n.Color = RED;
+            n.left.Color = BLACK;
+            n.right.Color = BLACK;
           }
           else
           {
-            if (i > n.right.data)
+            if (IsRed(n.right.right))
               n = RotateRR(n); // RR
             else
               n = RotateRL(n); // RL
@@ -100,7 +114,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
       }
       else
       {
-        // duplicat value, do nothing
+        // duplicate value, do nothing
       }
 
       return n;
@@ -115,6 +129,8 @@ namespace DataStructuresAndAlgorithmsInCSharp
         n.left = leftChild.right;
         leftChild.right = n;
 
+        leftChild.Color = BLACK;
+        n.Color = RED;
         return leftChild;
       }
       else
@@ -129,6 +145,8 @@ namespace DataStructuresAndAlgorithmsInCSharp
         n.right = rightChild.left;
         rightChild.left = n;
 
+        rightChild.Color = BLACK;
+        n.Color = RED;
         return rightChild;
       }
       else

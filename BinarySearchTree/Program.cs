@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace DataStructuresAndAlgorithmsInCSharp
+﻿namespace DataStructuresAndAlgorithmsInCSharp
 {
   internal class Program
   {
@@ -61,13 +56,21 @@ namespace DataStructuresAndAlgorithmsInCSharp
       System.Console.WriteLine("Begin Testing RBTree");
 
       RBTree rbt = new RBTree();
-      rbt.Insert(3);
-      rbt.Insert(23);
+      rbt.Insert(10);
+      rbt.Insert(20);
+      rbt.Insert(30);
+      rbt.Insert(35);
+      rbt.Insert(40);
       rbt.Insert(45);
-      rbt.Insert(16);
-      rbt.Insert(37);
-      rbt.Insert(22);
-      rbt.Insert(99);
+      rbt.Insert(50);
+      rbt.Insert(60);
+      rbt.Insert(65);
+      rbt.Insert(70);
+      rbt.Insert(75);
+      rbt.Insert(80);
+      rbt.Insert(85);
+      rbt.Insert(90);
+      rbt.Insert(95);
     }
   }
 }

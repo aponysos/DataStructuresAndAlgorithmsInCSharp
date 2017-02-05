@@ -1,17 +1,5 @@
-﻿/*
- * Created by SharpDevelop.
- * User: Aponysos
- * Date: 2010/6/27
- * Time: 15:49
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
-using System;
-
-namespace DataStructuresAndAlgorithmsInCSharp
+﻿namespace DataStructuresAndAlgorithmsInCSharp
 {
-  using System.Collections.Generic;
-
   /// <summary>
   /// AVL Tree
   /// </summary>
@@ -35,10 +23,9 @@ namespace DataStructuresAndAlgorithmsInCSharp
       {
         get { return right; }
       }
-      public int Color
+      public override string ToString()
       {
-        get { return 0; }
-        set { }
+        return Value.ToString();
       }
       public Node(int i)
       {
@@ -47,7 +34,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
       public int height = 0;
       public void UpdateHeight()
       {
-        this.height = Math.Max(Height(left), Height(right)) + 1;
+        this.height = System.Math.Max(Height(left), Height(right)) + 1;
       }
     }
 
@@ -70,7 +57,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
     public void Insert(int i)
     {
       root = Insert(i, root);
-      Console.WriteLine(TreePrinter.Print(this));
+      System.Console.WriteLine(TreePrinter.Print(this));
     }
 
     private Node Insert(int i, Node n)

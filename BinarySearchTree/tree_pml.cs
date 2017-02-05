@@ -8,7 +8,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
     int Value { get; set; }
     IBinaryTreeNode LeftChild { get; }
     IBinaryTreeNode RightChild { get; }
-    int Color { get; set; }
+    string ToString();
   }
 
   public interface IBinaryTree
@@ -24,7 +24,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
       public int Value { get { return 0; } set { } }
       public IBinaryTreeNode LeftChild { get { return null; } }
       public IBinaryTreeNode RightChild { get { return null; } }
-      public int Color { get { return 0; } set { } }
+      public override string ToString() { return "N"; }
       public static readonly NullBinaryTreeNode Instance =
           new NullBinaryTreeNode();
     }
@@ -51,7 +51,7 @@ namespace DataStructuresAndAlgorithmsInCSharp
         }
         else
         {
-          sb.Append("(" + (node.Color == 1 ? "R" : "") + node.Value + " ");
+          sb.Append("(" + node.ToString() + " ");
 
           nodes.Push(NullBinaryTreeNode.Instance);
           nodes.Push(node.RightChild);
