@@ -48,12 +48,6 @@
         return true;
       }
 
-      //check if value existed in the list. check first because prevent duplicated level while raise level.
-      if (Search(value) == true)
-      {
-        return false;
-      }
-
       Node current = head;
       if (head.next.next != null)
       {
@@ -237,21 +231,21 @@
 
       Node current = head;
       Node level = head.next;
-      string rlt = "";
+      System.Text.StringBuilder rlt = new System.Text.StringBuilder();
       while (level != null)
       {
         current = level;
         do
         {
-          rlt += "——" + current.value;
+          rlt.Append("——").Append(current.value);
           current = current.next;
         } while (current != null);
-        rlt += System.Environment.NewLine;
+        rlt.AppendLine();
         level = level.down;
       }
 
       System.Console.WriteLine(rlt);
-      return rlt;
+      return rlt.ToString();
     }
   }
 }
