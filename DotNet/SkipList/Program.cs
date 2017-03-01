@@ -61,7 +61,7 @@ namespace SkipList
         private int GetRandomLevel()
         {
             int randomLevel = 0;
-            while (rand_.NextDouble() < PROB)
+            while (randomLevel <= level_ && rand_.NextDouble() < PROB)
                 ++randomLevel;
             return randomLevel;
         }
@@ -84,11 +84,11 @@ namespace SkipList
             curNode.next = newNode;
             return newNode;
         }
-        private void InitDownLink(Stack<Node> nodes)
+        private void InitDownLink(Queue<Node> nodes)
         {
             while (nodes.Count > 1)
             {
-                Node node = nodes.Pop();
+                Node node = nodes.Dequeue();
                 node.down = nodes.Peek();
             }
         }
@@ -103,42 +103,46 @@ namespace SkipList
             if (Search(value)) // replicated value
                 return false;
 
-            Stack<Node> newHeadNodes = new Stack<Node>(); // new head node stack
-            Stack<Node> newNodes = new Stack<Node>(); // new value node stack
             int randomLevel = GetRandomLevel();
-            int curLevel = randomLevel;
-            Console.WriteLine("randomLevel : {0}, value : {1}", randomLevel, value);
+            Console.WriteLine("level_ : {0}, randomLevel : {1}, value : {2}", level_, randomLevel, value);
+
+            Queue<Node> newNodes = new Queue<Node>(); // new value nodes queue
+            Node newHeadNode = null; // new head node if not null
 
             // new level, new head node, new value node
-            for (; curLevel > level_; --curLevel)
+            if (randomLevel > level_)
             {
-                Node newHeadNode = new Node();
+                newHeadNode = new Node();
+                newHeadNode.down = head_;
+
                 Node newNode = InsertLevelNode(newHeadNode, value);
-                newHeadNodes.Push(newHeadNode);
-                newNodes.Push(newNode);
+                newNodes.Enqueue(newNode);
             }
 
             // old level, new value node
             Node curNode = head_;
-            for (; curLevel >= 0; --curLevel, curNode = curNode.down)
+            int curLevel = level_;
+            for (; curNode != null; curNode = curNode.down, --curLevel)
             {
                 while (curNode.next != null && value > curNode.next.value)
                     curNode = curNode.next;
 
-                Node newNode = InsertLevelNode(curNode, value);
-                newNodes.Push(newNode);
+                if (curLevel <= randomLevel) // new node in this level
+                {
+                    Node newNode = InsertLevelNode(curNode, value);
+                    newNodes.Enqueue(newNode);
+                }
             }
+
+            // init down links of new nodes
+            InitDownLink(newNodes);
 
             // update head & level
-            if (level_ < randomLevel)
+            if (newHeadNode != null)
             {
-                head_ = newHeadNodes.Peek();
+                head_ = newHeadNode;
                 level_ = randomLevel;
             }
-
-            // init down links of new nodes & new headnodes
-            InitDownLink(newHeadNodes);
-            InitDownLink(newNodes);
 
             return true;
         }
@@ -147,18 +151,18 @@ namespace SkipList
             if (head_.next == null)
                 return false;
 
-            Node current = head_;
+            Node curNode = head_;
             do
             {
-                while (current.next != null && value > current.next.value)
-                    current = current.next;
+                while (curNode.next != null && value > curNode.next.value)
+                    curNode = curNode.next;
 
-                if (current.next != null && value == current.next.value)
-                    current.next = current.next.next;
+                if (curNode.next != null && value == curNode.next.value)
+                    curNode.next = curNode.next.next;
 
-                current = current.down;
+                curNode = curNode.down;
             }
-            while (current != null);
+            while (curNode != null);
 
             return true;
         }
@@ -167,18 +171,18 @@ namespace SkipList
             if (head_.next == null)
                 return false;
 
-            Node current = head_;
+            Node curNode = head_;
             do
             {
-                while (current.next != null && value > current.next.value)
-                    current = current.next;
+                while (curNode.next != null && value > curNode.next.value)
+                    curNode = curNode.next;
 
-                if (current.next != null && value == current.next.value)
+                if (curNode.next != null && value == curNode.next.value)
                     return true;
 
-                current = current.down;
+                curNode = curNode.down;
             }
-            while (current != null);
+            while (curNode != null);
 
             return false;
         }
@@ -189,20 +193,20 @@ namespace SkipList
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
-            Node levelHead = head_.next;
+            Node curHead = head_;
             do
             {
-                Node current = levelHead;
+                Node curNode = curHead.next;
                 do
                 {
-                    sb.Append("——").Append(current.value);
-                    current = current.next;
+                    sb.Append("——").Append(curNode.value);
+                    curNode = curNode.next;
                 }
-                while (current != null);
+                while (curNode != null);
                 sb.AppendLine();
-                levelHead = levelHead.down;
+                curHead = curHead.down;
             }
-            while (levelHead != null);
+            while (curHead != null);
 
             return sb.ToString();
         }
