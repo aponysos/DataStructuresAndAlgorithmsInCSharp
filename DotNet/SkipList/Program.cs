@@ -17,13 +17,21 @@ namespace SkipList
             sl.Init();
             Console.WriteLine(sl.ToString());
             sl.Insert(1);
+            Console.WriteLine(sl.ToString());
             sl.Insert(2);
+            Console.WriteLine(sl.ToString());
             sl.Insert(3);
+            Console.WriteLine(sl.ToString());
             sl.Insert(4);
+            Console.WriteLine(sl.ToString());
             sl.Insert(5);
+            Console.WriteLine(sl.ToString());
             sl.Insert(6);
+            Console.WriteLine(sl.ToString());
             sl.Insert(7);
+            Console.WriteLine(sl.ToString());
             sl.Insert(8);
+            Console.WriteLine(sl.ToString());
             sl.Insert(9);
             Console.WriteLine(sl.ToString());
         }
@@ -42,11 +50,12 @@ namespace SkipList
                 this.down = down;
                 this.next = next;
             }
-            public Node(int value) : this(value, null, null)
+            public Node(int value = 0) : this(value, null, null)
             {
             }
         }
         private Node head_;
+        private int level_;
         private Random rand_ = new Random();
         private const double PROB = 0.25;
         private int GetRandomLevel()
@@ -62,16 +71,26 @@ namespace SkipList
         public void Init()
         {
             head_ = new Node(0);
+            level_ = 0;
         }
         public void Clear()
         {
             head_ = null;
+            level_ = 0;
         }
         private Node InsertLevelNode(Node curNode, int value)
         {
             Node newNode = new Node(value, null, curNode.next);
             curNode.next = newNode;
             return newNode;
+        }
+        private void InitDownLink(Stack<Node> nodes)
+        {
+            while (nodes.Count > 1)
+            {
+                Node node = nodes.Pop();
+                node.down = nodes.Peek();
+            }
         }
         public bool Insert(int value)
         {
@@ -84,32 +103,44 @@ namespace SkipList
             if (Search(value)) // replicated value
                 return false;
 
-            int curLevel = head_.value;
+            Stack<Node> newHeadNodes = new Stack<Node>(); // new head node stack
+            Stack<Node> newNodes = new Stack<Node>(); // new value node stack
             int randomLevel = GetRandomLevel();
-            Stack<Node> s = new Stack<Node>();
-            while (curLevel < randomLevel)
+            int curLevel = randomLevel;
+            Console.WriteLine("randomLevel : {0}, value : {1}", randomLevel, value);
+
+            // new level, new head node, new value node
+            for (; curLevel > level_; --curLevel)
             {
-                Node newNode = InsertLevelNode(head_, value);
-                newNode.down = s.Peek();
-                s.Push(newNode);
-                ++curLevel;
+                Node newHeadNode = new Node();
+                Node newNode = InsertLevelNode(newHeadNode, value);
+                newHeadNodes.Push(newHeadNode);
+                newNodes.Push(newNode);
             }
 
-            Node current = head_;
-            do
+            // old level, new value node
+            Node curNode = head_;
+            for (; curLevel >= 0; --curLevel, curNode = curNode.down)
             {
-                while (current.next != null && value > current.next.value)
-                    current = current.next;
+                while (curNode.next != null && value > curNode.next.value)
+                    curNode = curNode.next;
 
-                Node newNode = s.Pop();
-                newNode.next = current.next;
-                current.next = newNode;
-                current = current.down; // move to next level
-                --curLevel;
+                Node newNode = InsertLevelNode(curNode, value);
+                newNodes.Push(newNode);
             }
-            while (curLevel >= 0);
 
-            return false;
+            // update head & level
+            if (level_ < randomLevel)
+            {
+                head_ = newHeadNodes.Peek();
+                level_ = randomLevel;
+            }
+
+            // init down links of new nodes & new headnodes
+            InitDownLink(newHeadNodes);
+            InitDownLink(newNodes);
+
+            return true;
         }
         public bool Remove(int value)
         {
