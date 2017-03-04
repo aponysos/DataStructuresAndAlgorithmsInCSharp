@@ -45,20 +45,20 @@ namespace Graph
         }
         private Vertex[] vertices_;
         private int[,] adjMatrix_;
-        private const int MAX_NUM_VERTICES = 20;
+        private int maxVertices_;
         private int numVertices_;
-        public Graph()
+        public Graph(int maxVertices_ = 20)
         {
-            vertices_ = new Vertex[MAX_NUM_VERTICES];
-            adjMatrix_ = new int[MAX_NUM_VERTICES, MAX_NUM_VERTICES];
+            vertices_ = new Vertex[maxVertices_];
+            adjMatrix_ = new int[maxVertices_, maxVertices_];
             numVertices_ = 0;
-            for (int i = 0; i < MAX_NUM_VERTICES; ++i)
-                for (int j = 0; j < MAX_NUM_VERTICES; ++j)
+            for (int i = 0; i < maxVertices_; ++i)
+                for (int j = 0; j < maxVertices_; ++j)
                     adjMatrix_[i, j] = 0;
         }
         public bool AddVertex(string label)
         {
-            if (numVertices_ < MAX_NUM_VERTICES - 1)
+            if (numVertices_ < maxVertices_ - 1)
             {
                 vertices_[numVertices_++] = new Vertex(label);
                 return true;
@@ -68,7 +68,7 @@ namespace Graph
         }
         public bool AddEdge(int from, int to, int weight = 1)
         {
-            if (numVertices_ < MAX_NUM_VERTICES - 1)
+            if (numVertices_ < maxVertices_ - 1)
             {
                 adjMatrix_[from, to] = weight;
                 return true;
