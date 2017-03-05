@@ -10,6 +10,7 @@ namespace Graph
             TestTopologicalTraverse();
             TestDepthFirstTraverse();
             TestBreadthFirstTraverse();
+            TestMST();
             //Console.Read();
         }
         static void TestTopologicalTraverse()
@@ -91,6 +92,34 @@ namespace Graph
             g.AddEdge(11, 12);
             g.BreadthFirstTraverse();
         }
+        static void TestMST()
+        {
+            Console.WriteLine("TestMST");
+            Graph g = new Graph();
+            g.AddVertex("A");
+            g.AddVertex("B");
+            g.AddVertex("C");
+            g.AddVertex("D");
+            g.AddVertex("E");
+            g.AddVertex("F");
+            g.AddVertex("G");
+            g.AddEdge(0, 1);
+            g.AddEdge(0, 2);
+            g.AddEdge(0, 3);
+            g.AddEdge(1, 2);
+            g.AddEdge(1, 3);
+            g.AddEdge(1, 4);
+            g.AddEdge(2, 3);
+            g.AddEdge(2, 5);
+            g.AddEdge(3, 5);
+            g.AddEdge(3, 4);
+            g.AddEdge(3, 6);
+            g.AddEdge(4, 5);
+            g.AddEdge(4, 6);
+            g.AddEdge(5, 6);
+            g.MST();
+        }
+
     }
 
     public class Vertex
@@ -155,6 +184,11 @@ namespace Graph
         {
             BreadthFirstTraverser traverser = new BreadthFirstTraverser(this);
             traverser.Traverse();
+        }
+        public void MST()
+        {
+            MinimumSpanningTree mst = new MinimumSpanningTree(this);
+            mst.Traverse();
         }
     }
     public abstract class GraphTraverser
@@ -225,14 +259,17 @@ namespace Graph
         {
             Stack<int> s = new Stack<int>(nv_);
             s.Push(0);
+            VisitVertex(0);
 
             while (s.Count > 0)
             {
                 int cur = s.Pop();
-                VisitVertex(cur);
                 for (int i = 0; i < nv_; ++i)
                     if (!visited_[i] && g_.adjMatrix_[cur, i] > 0)
+                    {
                         s.Push(i);
+                        VisitVertex(i);
+                    }
             }
         }
     }
@@ -246,14 +283,41 @@ namespace Graph
         {
             Queue<int> q = new Queue<int>(nv_);
             q.Enqueue(0);
+            VisitVertex(0);
 
             while (q.Count > 0)
             {
                 int cur = q.Dequeue();
-                VisitVertex(cur);
                 for (int i = 0; i < nv_; ++i)
                     if (!visited_[i] && g_.adjMatrix_[cur, i] > 0)
+                    {
                         q.Enqueue(i);
+                        VisitVertex(i);
+                    }
+            }
+        }
+    }
+    public class MinimumSpanningTree : GraphTraverser
+    {
+        public MinimumSpanningTree(Graph g)
+            : base(g)
+        {
+        }
+        protected override void Traverse_()
+        {
+            Queue<int> q = new Queue<int>(nv_);
+            q.Enqueue(0);
+            VisitVertex(0);
+
+            while (q.Count > 0)
+            {
+                int cur = q.Dequeue();
+                for (int i = 0; i < nv_; ++i)
+                    if (!visited_[i] && g_.adjMatrix_[cur, i] > 0)
+                    {
+                        q.Enqueue(i);
+                        VisitVertex(i);
+                    }
             }
         }
     }
