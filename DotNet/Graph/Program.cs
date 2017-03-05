@@ -79,54 +79,66 @@ namespace Graph
         }
         public void TopologicalSort()
         {
-            TopologicalSorter sorter = new TopologicalSorter(this);
-            sorter.Sort();
+            TopologicalTraverser traverser = new TopologicalTraverser(this);
+            traverser.Traverse();
         }
     }
-    public class TopologicalSorter
+    public abstract class GraphTraverser
     {
-        private Graph g_;
-        private int nv_; // # of vertices
-        private bool[] visited_;
-        private Stack<int> s_;
-        public TopologicalSorter(Graph g)
+        protected Graph g_;
+        protected int nv_; // # of vertices
+        protected bool[] visited_; // if vertex is visited
+        protected List<int> l_; // list of of vertices in visiting order 
+        protected GraphTraverser(Graph g)
         {
             g_ = g;
             nv_ = g.numVertices_;
             visited_ = new bool[nv_];
             for (int i = 0; i < nv_; ++i)
                 visited_[i] = false;
-            s_ = new Stack<int>(nv_);
+            l_ = new List<int>(nv_);
         }
-        public void Sort()
+        protected abstract void Traverse_();
+        public void Traverse()
         {
-            while (s_.Count < nv_)
-                for (int i = 0; i < nv_ && !visited_[i]; ++i)
-                {
-                    if (!HasOutgoingEdge(i))
-                        VisitVertex(i);
-                }
-
+            Traverse_();
             Output();
         }
-        private void VisitVertex(int i)
+        protected void VisitVertex(int i)
         {
             if (visited_[i])
                 throw new InvalidOperationException("vertex has been visited.");
             visited_[i] = true;
-            s_.Push(i);
+            l_.Add(i);
         }
-        private void Output()
+        protected void Output()
         {
-            while (s_.Count > 0)
-                Console.WriteLine(g_.vertices_[s_.Pop()]);
+            foreach (int i in l_)
+                Console.WriteLine(g_.vertices_[i]);
         }
-        private bool HasOutgoingEdge(int i)
+        protected bool HasOutgoingEdge(int i)
         {
             for (int j = 0; j < nv_; ++j)
                 if (!visited_[j] && g_.adjMatrix_[i, j] > 0)
                     return true;
             return false;
+        }
+    }
+    public class TopologicalTraverser : GraphTraverser
+    {
+        public TopologicalTraverser(Graph g)
+            : base(g)
+        {
+        }
+        protected override void Traverse_()
+        {
+            while (l_.Count < nv_)
+                for (int i = 0; i < nv_ && !visited_[i]; ++i)
+                {
+                    if (!HasOutgoingEdge(i))
+                        VisitVertex(i);
+                }
+            l_.Reverse();
         }
     }
 }
