@@ -7,12 +7,14 @@ namespace Graph
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Test Graph:");
-            TestGraph();
+            TestTopologicalTraverse();
+            TestDepthFirstTraverse();
+            TestBreadthFirstTraverse();
             //Console.Read();
         }
-        static void TestGraph()
+        static void TestTopologicalTraverse()
         {
+            Console.WriteLine("TestTopologicalTraverse");
             Graph g = new Graph();
             g.AddVertex("CS1");
             g.AddVertex("CS2");
@@ -25,7 +27,69 @@ namespace Graph
             g.AddEdge(1, 5);
             g.AddEdge(2, 3);
             g.AddEdge(2, 4);
-            g.TopologicalSort();
+            g.TopologicalTraverse();
+        }
+        static void TestDepthFirstTraverse()
+        {
+            Console.WriteLine("TestDepthFirstTraverse");
+            Graph g = new Graph();
+            g.AddVertex("A");
+            g.AddVertex("B");
+            g.AddVertex("C");
+            g.AddVertex("D");
+            g.AddVertex("E");
+            g.AddVertex("F");
+            g.AddVertex("G");
+            g.AddVertex("H");
+            g.AddVertex("I");
+            g.AddVertex("J");
+            g.AddVertex("K");
+            g.AddVertex("L");
+            g.AddVertex("M");
+            g.AddEdge(0, 1);
+            g.AddEdge(1, 2);
+            g.AddEdge(2, 3);
+            g.AddEdge(0, 4);
+            g.AddEdge(4, 5);
+            g.AddEdge(5, 6);
+            g.AddEdge(0, 7);
+            g.AddEdge(7, 8);
+            g.AddEdge(8, 9);
+            g.AddEdge(0, 10);
+            g.AddEdge(10, 11);
+            g.AddEdge(11, 12);
+            g.DepthFirstTraverse();
+        }
+        static void TestBreadthFirstTraverse()
+        {
+            Console.WriteLine("TestBreadthFirstTraverse");
+            Graph g = new Graph();
+            g.AddVertex("A");
+            g.AddVertex("B");
+            g.AddVertex("C");
+            g.AddVertex("D");
+            g.AddVertex("E");
+            g.AddVertex("F");
+            g.AddVertex("G");
+            g.AddVertex("H");
+            g.AddVertex("I");
+            g.AddVertex("J");
+            g.AddVertex("K");
+            g.AddVertex("L");
+            g.AddVertex("M");
+            g.AddEdge(0, 1);
+            g.AddEdge(1, 2);
+            g.AddEdge(2, 3);
+            g.AddEdge(0, 4);
+            g.AddEdge(4, 5);
+            g.AddEdge(5, 6);
+            g.AddEdge(0, 7);
+            g.AddEdge(7, 8);
+            g.AddEdge(8, 9);
+            g.AddEdge(0, 10);
+            g.AddEdge(10, 11);
+            g.AddEdge(11, 12);
+            g.BreadthFirstTraverse();
         }
     }
 
@@ -77,9 +141,19 @@ namespace Graph
             else
                 return false;
         }
-        public void TopologicalSort()
+        public void TopologicalTraverse()
         {
             TopologicalTraverser traverser = new TopologicalTraverser(this);
+            traverser.Traverse();
+        }
+        public void DepthFirstTraverse()
+        {
+            DepthFirstTraverser traverser = new DepthFirstTraverser(this);
+            traverser.Traverse();
+        }
+        public void BreadthFirstTraverse()
+        {
+            BreadthFirstTraverser traverser = new BreadthFirstTraverser(this);
             traverser.Traverse();
         }
     }
@@ -116,13 +190,6 @@ namespace Graph
             foreach (int i in l_)
                 Console.WriteLine(g_.vertices_[i]);
         }
-        protected bool HasOutgoingEdge(int i)
-        {
-            for (int j = 0; j < nv_; ++j)
-                if (!visited_[j] && g_.adjMatrix_[i, j] > 0)
-                    return true;
-            return false;
-        }
     }
     public class TopologicalTraverser : GraphTraverser
     {
@@ -139,6 +206,55 @@ namespace Graph
                         VisitVertex(i);
                 }
             l_.Reverse();
+        }
+        private bool HasOutgoingEdge(int i)
+        {
+            for (int j = 0; j < nv_; ++j)
+                if (!visited_[j] && g_.adjMatrix_[i, j] > 0)
+                    return true;
+            return false;
+        }
+    }
+    public class DepthFirstTraverser : GraphTraverser
+    {
+        public DepthFirstTraverser(Graph g)
+            : base(g)
+        {
+        }
+        protected override void Traverse_()
+        {
+            Stack<int> s = new Stack<int>(nv_);
+            s.Push(0);
+
+            while (s.Count > 0)
+            {
+                int cur = s.Pop();
+                VisitVertex(cur);
+                for (int i = 0; i < nv_; ++i)
+                    if (!visited_[i] && g_.adjMatrix_[cur, i] > 0)
+                        s.Push(i);
+            }
+        }
+    }
+    public class BreadthFirstTraverser : GraphTraverser
+    {
+        public BreadthFirstTraverser(Graph g)
+            : base(g)
+        {
+        }
+        protected override void Traverse_()
+        {
+            Queue<int> q = new Queue<int>(nv_);
+            q.Enqueue(0);
+
+            while (q.Count > 0)
+            {
+                int cur = q.Dequeue();
+                VisitVertex(cur);
+                for (int i = 0; i < nv_; ++i)
+                    if (!visited_[i] && g_.adjMatrix_[cur, i] > 0)
+                        q.Enqueue(i);
+            }
         }
     }
 }
