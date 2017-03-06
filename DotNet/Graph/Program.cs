@@ -171,44 +171,62 @@ namespace Graph
         public void TopologicalTraverse()
         {
             TopologicalTraverser traverser = new TopologicalTraverser(this);
-            traverser.Traverse();
+            traverser.Process();
         }
         public void DepthFirstTraverse()
         {
             DepthFirstTraverser traverser = new DepthFirstTraverser(this);
-            traverser.Traverse();
+            traverser.Process();
         }
         public void BreadthFirstTraverse()
         {
             BreadthFirstTraverser traverser = new BreadthFirstTraverser(this);
-            traverser.Traverse();
+            traverser.Process();
         }
         public void MST()
         {
             MinimumSpanningTree mst = new MinimumSpanningTree(this);
-            mst.Traverse();
+            mst.Process();
         }
     }
-    public abstract class GraphTraverser
+    public abstract class GraphProcessor
     {
-        protected Graph g_;
+        protected Graph g_; // graph object
         protected int nv_; // # of vertices
-        protected bool[] visited_; // if vertex is visited
-        protected List<int> l_; // list of of vertices in visiting order 
-        protected GraphTraverser(Graph g)
+        protected GraphProcessor(Graph g)
         {
             g_ = g;
             nv_ = g.numVertices_;
+        }
+        protected abstract void Process_();
+        protected abstract void Output_();
+        public void Process()
+        {
+            Process_();
+            Output_();
+        }
+    }
+    public abstract class GraphTraverser : GraphProcessor
+    {
+        protected bool[] visited_; // if vertex is visited
+        protected List<int> l_; // list of of vertices in visiting order 
+        protected GraphTraverser(Graph g)
+            : base(g)
+        {
             visited_ = new bool[nv_];
             for (int i = 0; i < nv_; ++i)
                 visited_[i] = false;
             l_ = new List<int>(nv_);
         }
         protected abstract void Traverse_();
-        public void Traverse()
+        protected override void Process_()
         {
             Traverse_();
-            Output();
+        }
+        protected override void Output_()
+        {
+            foreach (int i in l_)
+                Console.WriteLine(g_.vertices_[i]);
         }
         protected void VisitVertex(int i)
         {
@@ -216,11 +234,6 @@ namespace Graph
                 throw new InvalidOperationException("vertex has been visited.");
             visited_[i] = true;
             l_.Add(i);
-        }
-        protected void Output()
-        {
-            foreach (int i in l_)
-                Console.WriteLine(g_.vertices_[i]);
         }
     }
     public class TopologicalTraverser : GraphTraverser
@@ -295,28 +308,21 @@ namespace Graph
             }
         }
     }
-    public class MinimumSpanningTree : GraphTraverser
+    public class MinimumSpanningTree : GraphProcessor
     {
         public MinimumSpanningTree(Graph g)
             : base(g)
         {
         }
-        protected override void Traverse_()
+        protected override void Process_()
         {
-            Queue<int> q = new Queue<int>(nv_);
-            q.Enqueue(0);
-            VisitVertex(0);
-
-            while (q.Count > 0)
-            {
-                int cur = q.Dequeue();
-                for (int i = 0; i < nv_; ++i)
-                    if (!visited_[i] && g_.adjMatrix_[cur, i] > 0)
-                    {
-                        q.Enqueue(i);
-                        VisitVertex(i);
-                    }
-            }
+            MST();
+        }
+        protected override void Output_()
+        {
+        }
+        private void MST()
+        {
         }
     }
 }
