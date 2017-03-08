@@ -310,9 +310,23 @@ namespace Graph
     }
     public class MinimumSpanningTree : GraphProcessor
     {
+        private struct Edge
+        {
+            public int from;
+            public int to;
+            public int weight;
+            public Edge(int f, int t, int w)
+            {
+                from = f;
+                to = t;
+                weight = w;
+            }
+        }
+        private List<Edge> l_; // result edge list
         public MinimumSpanningTree(Graph g)
             : base(g)
         {
+            l_ = new List<Edge>();
         }
         protected override void Process_()
         {
@@ -320,9 +334,32 @@ namespace Graph
         }
         protected override void Output_()
         {
+            foreach (Edge e in l_)
+            {
+                Console.WriteLine("{0} -> {1}", g_.vertices_[e.from],  g_.vertices_[e.to]);
+            }
         }
         private void MST()
         {
+            List<Edge> l = new List<Edge>(); // edge list
+            for (int i = 0; i < nv_; ++i)
+                for (int j = 0; j < nv_; ++j)
+                    if (g_.adjMatrix_[i, j] > 0)
+                        l.Add(new Edge(i, j, g_.adjMatrix_[i, j]));
+            l.Sort(
+                (e1, e2) =>
+                {
+                    return e1.weight - e2.weight;
+                }
+            ); // sort edge list
+            List<int> lv = new List<int>(); // added vertices
+            foreach (Edge e in l)
+                if (!(lv.Contains(e.from) && lv.Contains(e.to)))
+                {
+                    lv.Add(e.from);
+                    lv.Add(e.to);
+                    l_.Add(e);
+                }
         }
     }
 }
