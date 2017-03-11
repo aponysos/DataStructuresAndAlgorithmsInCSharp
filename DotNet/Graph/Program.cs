@@ -11,6 +11,7 @@ namespace Graph
             TestDepthFirstTraverse();
             TestBreadthFirstTraverse();
             TestMST();
+            TestShortestPath();
             //Console.Read();
         }
         static void TestTopologicalTraverse()
@@ -117,7 +118,31 @@ namespace Graph
             g.AddEdge(4, 6, 6);
             g.MST();
         }
-
+        static void TestShortestPath()
+        {
+            Console.WriteLine("TestShortestPath");
+            Graph g = new Graph();
+            g.AddVertex("A");
+            g.AddVertex("B");
+            g.AddVertex("C");
+            g.AddVertex("D");
+            g.AddVertex("E");
+            g.AddVertex("F");
+            g.AddVertex("G");
+            g.AddEdge(0, 1, 2);
+            g.AddEdge(0, 3, 1);
+            g.AddEdge(1, 3, 3);
+            g.AddEdge(1, 4, 10);
+            g.AddEdge(2, 0, 4);
+            g.AddEdge(2, 5, 5);
+            g.AddEdge(3, 2, 2);
+            g.AddEdge(3, 4, 2);
+            g.AddEdge(3, 5, 8);
+            g.AddEdge(3, 6, 4);
+            g.AddEdge(6, 5, 1);
+            g.AddEdge(4, 6, 6);
+            g.ShortestPath();
+        }
     }
 
     public class Vertex
@@ -187,6 +212,11 @@ namespace Graph
         {
             MinimumSpanningTree mst = new MinimumSpanningTree(this);
             mst.Process();
+        }
+        public void ShortestPath()
+        {
+            ShortestPath sp = new ShortestPath(this);
+            sp.Process();
         }
     }
     public abstract class GraphProcessor
@@ -335,9 +365,7 @@ namespace Graph
         protected override void Output_()
         {
             foreach (Edge e in l_)
-            {
                 Console.WriteLine("{0} -> {1}", g_.vertices_[e.from],  g_.vertices_[e.to]);
-            }
         }
         private void MST()
         {
@@ -360,6 +388,57 @@ namespace Graph
                     lv.Add(e.to);
                     l_.Add(e);
                 }
+        }
+    }
+    public class ShortestPath : GraphProcessor
+    {
+        private struct DTItem // distacne table item
+        {
+            public bool visited;
+            public int distacne;
+            public int via;
+            public DTItem(bool v, int d, int vi)
+            {
+                visited = v;
+                distacne = d;
+                via = vi;
+            }
+        }
+        DTItem [] dt_; // distance table
+        public ShortestPath(Graph g)
+            : base(g)
+        {
+            dt_ = new DTItem[nv_];
+            for (int i = 1; i < nv_; ++i)
+                dt_[i] = new DTItem(false, Int32.MaxValue, 0);
+        }
+        protected override void Process_()
+        {
+            Queue<int> q = new Queue<int>(nv_);
+            q.Enqueue(0);
+            dt_[0] = new DTItem(true, 0, 0);
+
+            while (q.Count > 0)
+            {
+                int cur = q.Dequeue();
+                for (int i = 0; i < nv_; ++i)
+                    if (g_.adjMatrix_[cur, i] > 0)
+                    {
+                        int newDistance = dt_[cur].distacne + g_.adjMatrix_[cur, i];
+                        if (newDistance < dt_[i].distacne)
+                        {
+                            q.Enqueue(i);
+                            dt_[i].distacne = newDistance;
+                            dt_[i].via = cur;
+                        }
+                    }
+            }
+        }
+        protected override void Output_()
+        {
+            int i = 0;
+            foreach (var dti in dt_)
+                Console.WriteLine("{0} <- {1} : {2}", g_.vertices_[i++], g_.vertices_[dti.via], dti.distacne);
         }
     }
 }
