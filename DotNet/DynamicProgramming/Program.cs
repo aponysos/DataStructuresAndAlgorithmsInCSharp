@@ -15,8 +15,7 @@ namespace DynamicProgramming
             Console.WriteLine("TestLCS:");
             LCSAlgorithm lcs = new LCSAlgorithm("ABCBDAB", "BDCABA");
             lcs.Compute();
-            lcs.DisplayArray();
-            Console.WriteLine(lcs.LongestCommonSubstring);
+            Console.WriteLine(lcs.LongestCommonSubsquence);
         }
     }
     class LCSAlgorithm
@@ -27,7 +26,7 @@ namespace DynamicProgramming
         private int lt_;
         private int [,] arr_;
         private StringBuilder lcs_;
-        public string LongestCommonSubstring
+        public string LongestCommonSubsquence
         {
             get { return lcs_.ToString(); }
         }
@@ -44,10 +43,15 @@ namespace DynamicProgramming
                 arr_[0, j] = 0;
             lcs_ = new StringBuilder();
         }
-        public void DisplayArray()
+        private void DisplayArray()
         {
+            Console.WriteLine("  {0}", t_);
             for (int i = 0; i <= ls_; ++i)
             {
+                if (i > 0)
+                    Console.Write(s_[i - 1]);
+                else
+                    Console.Write(" ");
                 for (int j = 0; j <= lt_; ++j)
                     Console.Write(arr_[i, j]);
                 Console.WriteLine();
@@ -57,20 +61,29 @@ namespace DynamicProgramming
         {
             for (int i = 1; i <= ls_; ++i)
                 for (int j = 1; j <= lt_; ++j)
-                    if (s_[i] == t_[j])
+                    if (s_[i - 1] == t_[j - 1])
                         arr_[i, j] = arr_[i - 1, j - 1] + 1;
                     else
-                        arr_[i, j] = 0;
-            int z = 0;
-            for (int i = 1; i <= ls_; ++i)
-                for (int j = 1; j <= lt_; ++j)
-                    if (arr_[i, j] > z)
-                    {
-                        z = arr_[i, j];
-                        lcs_ = new StringBuilder(s_.Substring(i - z + 1, z - 1));
-                    }
-                    else if (arr_[i, j] == z)
-                        lcs_.Append(s_.Substring(i - z + 1, z - 1));
+                        arr_[i, j] = Math.Max(arr_[i, j - 1], arr_[i - 1, j]);
+            DisplayArray(); // display internal array
+            BackTrack(ls_, lt_); // back track the subsequence
+        }
+        private void BackTrack(int i, int j)
+        {
+            if (i == 0 || j == 0)
+                return;
+            else if (s_[i - 1] == t_[j - 1])
+            {
+                lcs_.Insert(0, s_[i - 1]); // prepend
+                BackTrack(i - 1, j - 1);
+            }
+            else
+            {
+                if (arr_[i, j - 1] > arr_[i - 1, j])
+                    BackTrack(i, j - 1);
+                else
+                    BackTrack(i - 1, j);
+            }
         }
     }
 }
