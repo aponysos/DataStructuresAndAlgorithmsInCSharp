@@ -9,6 +9,7 @@ namespace DynamicProgramming
         {
             //Console.WriteLine("Hello World!");
             TestLCS();
+            TestKnapsackProblem();
         }
         static void TestLCS()
         {
@@ -16,6 +17,15 @@ namespace DynamicProgramming
             LCSAlgorithm lcs = new LCSAlgorithm("ABCBDAB", "BDCABA");
             lcs.Compute();
             Console.WriteLine(lcs.LongestCommonSubsquence);
+        }
+        static void TestKnapsackProblem()
+        {
+            Console.WriteLine("TestKnapsackProblem:");
+            KnapsackProblem ksp = new KnapsackProblem(
+                new int[] {3, 4, 7, 8, 9}, 
+                new int[] {4, 5, 10, 11, 13}
+            );
+            ksp.Compute();
         }
     }
     class LCSAlgorithm
@@ -85,6 +95,19 @@ namespace DynamicProgramming
                 BackTrack(i, j - 1);
             else
                 BackTrack(i - 1, j);
+        }
+    }
+    class KnapsackProblem
+    {
+        private int[] sizes_;
+        private int[] values_;
+        public KnapsackProblem(int[] sizes, int[] values)
+        {
+            sizes_ = sizes;
+            values_ = values;
+        }
+        public void Compute()
+        {
         }
     }
 }
