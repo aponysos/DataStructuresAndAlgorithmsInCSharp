@@ -81,13 +81,10 @@ namespace DynamicProgramming
                 lcs_.Insert(0, s_[i - 1]); // prepend
                 BackTrack(i - 1, j - 1);
             }
+            else if (arr_[i, j - 1] > arr_[i - 1, j])
+                BackTrack(i, j - 1);
             else
-            {
-                if (arr_[i, j - 1] > arr_[i - 1, j])
-                    BackTrack(i, j - 1);
-                else
-                    BackTrack(i - 1, j);
-            }
+                BackTrack(i - 1, j);
         }
     }
 }
