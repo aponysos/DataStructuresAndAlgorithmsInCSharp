@@ -43,6 +43,21 @@ namespace DynamicProgramming
                 arr_[0, j] = 0;
             lcs_ = new StringBuilder();
         }
+        public void Compute()
+        {
+            ComputeArray(); // compute internal array
+            DisplayArray(); // display internal array
+            BackTrack(ls_, lt_); // back track the subsequence
+        }
+        private void ComputeArray()
+        {
+            for (int i = 1; i <= ls_; ++i)
+                for (int j = 1; j <= lt_; ++j)
+                    if (s_[i - 1] == t_[j - 1])
+                        arr_[i, j] = arr_[i - 1, j - 1] + 1;
+                    else
+                        arr_[i, j] = Math.Max(arr_[i, j - 1], arr_[i - 1, j]);
+        }
         private void DisplayArray()
         {
             Console.WriteLine("  {0}", t_);
@@ -56,17 +71,6 @@ namespace DynamicProgramming
                     Console.Write(arr_[i, j]);
                 Console.WriteLine();
             }
-        }
-        public void Compute()
-        {
-            for (int i = 1; i <= ls_; ++i)
-                for (int j = 1; j <= lt_; ++j)
-                    if (s_[i - 1] == t_[j - 1])
-                        arr_[i, j] = arr_[i - 1, j - 1] + 1;
-                    else
-                        arr_[i, j] = Math.Max(arr_[i, j - 1], arr_[i - 1, j]);
-            DisplayArray(); // display internal array
-            BackTrack(ls_, lt_); // back track the subsequence
         }
         private void BackTrack(int i, int j)
         {
