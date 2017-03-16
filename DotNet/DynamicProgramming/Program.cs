@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Collections.Generic;
 
 namespace DynamicProgramming
 {
@@ -17,6 +18,18 @@ namespace DynamicProgramming
             LCSAlgorithm lcs = new LCSAlgorithm("ABCBDAB", "BDCABA");
             lcs.Compute();
             Console.WriteLine(lcs.LongestCommonSubsquence);
+        }
+        static void TestHuffmanEncoding()
+        {
+            Console.WriteLine("TestHuffmanEncoding:");
+            HuffmanTree huffman = new HuffmanTree();
+            huffman.AddNode("a", 45);
+            huffman.AddNode("m", 15);
+            huffman.AddNode("r", 8);
+            huffman.AddNode("s", 9);
+            huffman.AddNode("t", 13);
+            huffman.Construct();
+            huffman.OutputEncoding();
         }
         static void TestKnapsackProblem()
         {
@@ -95,6 +108,35 @@ namespace DynamicProgramming
                 BackTrack(i, j - 1);
             else
                 BackTrack(i - 1, j);
+        }
+    }
+    class HuffmanTree
+    {
+        public class Node
+        {
+            public Node left;
+            public Node right;
+            public string letter;
+            public int weight;
+        }
+        Node root_;
+        Dictionary<string, int> letters_;
+        public HuffmanTree()
+        {
+            root_ = null;
+            letters_ = new Dictionary<string, int>();
+        }
+        public void AddNode(string letter, int weight)
+        {
+            letters_.Add(letter, weight);
+        }
+        public void Construct()
+        {
+
+        }
+        public void OutputEncoding()
+        {
+
         }
     }
     class KnapsackProblem
