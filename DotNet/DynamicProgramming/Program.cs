@@ -10,6 +10,7 @@ namespace DynamicProgramming
         {
             //Console.WriteLine("Hello World!");
             TestLCS();
+            TestHuffmanEncoding();
             TestKnapsackProblem();
         }
         static void TestLCS()
@@ -118,25 +119,71 @@ namespace DynamicProgramming
             public Node right;
             public string letter;
             public int weight;
+            public string code;
+            public Node(string l = "", int w = 0)
+            {
+                letter = l;
+                weight = w;
+                left = right = null;
+                code = "";
+            }
         }
-        Node root_;
-        Dictionary<string, int> letters_;
+        List<Node> letterNodes_;
+        List<Node> treeNodes_;
         public HuffmanTree()
         {
-            root_ = null;
-            letters_ = new Dictionary<string, int>();
+            letterNodes_ = new List<Node>();
+            treeNodes_ = new List<Node>();
         }
         public void AddNode(string letter, int weight)
         {
-            letters_.Add(letter, weight);
+            Node newNode = new Node(letter, weight);
+            letterNodes_.Add(newNode);
+            treeNodes_.Add(newNode);
         }
         public void Construct()
         {
-
+            treeNodes_.Sort((a, b) => {return a.weight - b.weight;});
+            while (treeNodes_.Count > 1)
+            {
+                // construct new node from top-2 nodes
+                Node newNode = new Node();
+                Node left = treeNodes_[0];
+                Node right = treeNodes_[1];
+                newNode.left = left;
+                newNode.right = right;
+                newNode.weight = left.weight + right.weight;
+                // remove top-2 nodes
+                treeNodes_.RemoveAt(0);
+                treeNodes_.RemoveAt(0);
+                // add new nodes
+                treeNodes_.Add(newNode);
+                // re-sort list
+                treeNodes_.Sort((a, b) => {return a.weight - b.weight;});
+            }
         }
         public void OutputEncoding()
         {
-
+            if (treeNodes_.Count != 1) return;
+            // depth-first traverse
+            Stack<Node> s = new Stack<Node>();
+            s.Push(treeNodes_[0]); // push root node
+            while (s.Count > 0)
+            {
+                Node cur = s.Pop();
+                if (cur.left != null)
+                {
+                    cur.left.code = cur.code + "0";
+                    s.Push(cur.left);
+                }
+                if (cur.right != null)
+                {
+                    cur.right.code = cur.code + "1";
+                    s.Push(cur.right);
+                }
+            }
+            foreach (Node n in letterNodes_)
+                Console.WriteLine("{0} : {1}", n.letter, n.code);
         }
     }
     class KnapsackProblem
