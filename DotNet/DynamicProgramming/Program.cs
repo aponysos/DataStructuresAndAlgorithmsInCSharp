@@ -203,6 +203,40 @@ namespace DynamicProgramming
         }
         public void Compute()
         {
+            List<Carpet> rugs = new List<Carpet>();
+            for (int i = 0; i < items_.Length; ++i)
+                rugs.Add(new Carpet(items_[i], units_[i], values_[i]));
+            Knapsack ks = new Knapsack(quantity_);
+            ks.Fill(rugs);
+            ks.OutputItems();
+        }
+    }
+    public class Carpet
+    {
+        private string item_;
+        private int unit_;
+        private double value_;
+        public Carpet(string i, int u, double v)
+        {
+            item_ = i;
+            unit_ = u;
+            value_ = v;
+        }
+    }
+    public class Knapsack
+    {
+        private int quantity_;
+        public Knapsack(int q)
+        {
+            quantity_ = q;
+        }
+        public void Fill(List<Carpet> rugs)
+        {
+
+        }
+        public void OutputItems()
+        {
+            
         }
     }
 }
