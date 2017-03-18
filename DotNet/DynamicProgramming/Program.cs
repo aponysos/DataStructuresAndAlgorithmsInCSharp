@@ -36,8 +36,10 @@ namespace DynamicProgramming
         {
             Console.WriteLine("TestKnapsackProblem:");
             KnapsackProblem ksp = new KnapsackProblem(
-                new int[] {3, 4, 7, 8, 9}, 
-                new int[] {4, 5, 10, 11, 13}
+                25, 
+                new string[] {"Frieze", "Saxony", "Shag", "Loop"}, 
+                new int[] {12, 9, 13, 10}, 
+                new double[] {1.75, 1.82, 1.5, 1.77}
             );
             ksp.Compute();
         }
@@ -188,11 +190,15 @@ namespace DynamicProgramming
     }
     class KnapsackProblem
     {
-        private int[] sizes_;
-        private int[] values_;
-        public KnapsackProblem(int[] sizes, int[] values)
+        private int quantity_;
+        private string[] items_;
+        private int[] units_;
+        private double[] values_;
+        public KnapsackProblem(int quantity, string[] items, int[] units, double[] values)
         {
-            sizes_ = sizes;
+            quantity_ = quantity;
+            items_ = items;
+            units_ = units;
             values_ = values;
         }
         public void Compute()
