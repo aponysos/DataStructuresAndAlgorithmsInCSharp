@@ -213,30 +213,57 @@ namespace DynamicProgramming
     }
     public class Carpet
     {
-        private string item_;
-        private int unit_;
-        private double value_;
+        public string item_;
+        public int unit_;
+        public double value_;
         public Carpet(string i, int u, double v)
         {
             item_ = i;
             unit_ = u;
             value_ = v;
         }
+        public override string ToString()
+        {
+            return string.Format("{0} : {1} : {2}", item_, unit_, value_);
+        }
     }
     public class Knapsack
     {
         private int quantity_;
+        private List<Carpet> items_;
         public Knapsack(int q)
         {
             quantity_ = q;
+            items_ = new List<Carpet>();
         }
         public void Fill(List<Carpet> rugs)
         {
-
+            rugs.Sort((c1, c2) => 
+            {
+                return c1.value_/c1.unit_ > c2.value_/c2.unit_ ? 1 : -1;
+            });
+            int curQuatity = 0;
+            foreach (Carpet c in rugs)
+            {
+                if (curQuatity + c.unit_ <= quantity_)
+                {
+                    curQuatity += c.unit_;
+                    items_.Add(c);
+                }
+                else
+                {
+                    int unitLeft = quantity_ - curQuatity;
+                    double valueLeft = c.value_ * unitLeft;
+                    c.unit_ = unitLeft;
+                    curQuatity += c.unit_;
+                    items_.Add(c);
+                }
+            }
         }
         public void OutputItems()
         {
-            
+            foreach (Carpet c in items_)
+                Console.WriteLine(c);
         }
     }
 }
